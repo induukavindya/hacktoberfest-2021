@@ -85,10 +85,7 @@ class SHA256:
 		self.h[7] = (self.h[7] + h)%2**32
 
 	def digest(self)->bytes:
-		new = SHA256()
-		new._msg = self._msg[:]
-		new._length = self._length
-		new.h = self.h[:]
+		new = self.copy()
 		new._msg = new._pad(new._msg)
 		while new._msg:
 			new._compress(new._msg[:64])
