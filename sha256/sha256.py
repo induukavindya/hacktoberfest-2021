@@ -104,3 +104,10 @@ class SHA256:
 		while len(self._msg) >= 64:
 			self._compress(self._msg[:64])
 			self._msg = self._msg[64:]
+
+	def copy(self):
+		new = SHA256()
+		new._msg = self._msg[:]
+		new._length = self._length
+		new.h = self.h[:]
+		return new
