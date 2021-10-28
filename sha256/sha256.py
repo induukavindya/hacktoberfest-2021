@@ -23,7 +23,7 @@ const_k = [
 ]
 
 class SHA256:
-	def __init__(self, message:bytes):
+	def __init__(self, message:bytes=b''):
 		self.h = const_h.copy()
 		self.k = const_k.copy()
 		self._msg = message
@@ -85,10 +85,22 @@ class SHA256:
 		self.h[7] = (self.h[7] + h)%2**32
 
 	def digest(self)->bytes:
-		self._msg = self._pad(self._msg)
-		while self._msg:
+		new = SHA256()
+		new._msg = self._msg[:]
+		new._length = self._length
+		new.h = self.h[:]
+		new._msg = new._pad(new._msg)
+		while new._msg:
+			new._compress(new._msg[:64])
+			new._msg = new._msg[64:]
+
+		digest = b''.join([pack('>I', x) for x in new.h])
+		return digest
+
+	def update(self, message:bytes):
+		self._msg += message
+		self._length += len(message)
+
+		while len(self._msg) >= 64:
 			self._compress(self._msg[:64])
 			self._msg = self._msg[64:]
-
-		self.digest = b''.join([pack('>I', x) for x in self.h])
-		return self.digest
