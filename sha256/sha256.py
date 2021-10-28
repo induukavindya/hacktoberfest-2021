@@ -1,4 +1,5 @@
 from struct import pack, unpack
+from binascii import hexlify
 
 const_h = [
 	0x6a09e667,
@@ -93,6 +94,11 @@ class SHA256:
 
 		digest = b''.join([pack('>I', x) for x in new.h])
 		return digest
+
+	def hexdigest(self)->str:
+		digest = self.digest()
+		hexdigest = hexlify(digest).decode()
+		return hexdigest
 
 	def update(self, message:bytes):
 		self._msg += message
